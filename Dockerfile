@@ -22,10 +22,12 @@ COPY . .
 # Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 
-# Set storage permissions
-RUN chmod -R 775 storage bootstrap/cache
+# Set storage permissions + fix line endings on start script
+RUN chmod -R 775 storage bootstrap/cache \
+    && apt-get install -y dos2unix \
+    && dos2unix start.sh \
+    && chmod +x start.sh
 
 EXPOSE 8080
 
-# Start script
-CMD bash start.sh
+CMD ["/bin/bash", "start.sh"]
